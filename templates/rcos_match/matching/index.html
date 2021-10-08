@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}Matching{% endblock %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'rcos_match/styles.css' %}">
+<html>
+<body onload="loadPage()">
+
+<div>
+
+    <div class="column" style="background-color:#ededed;"> 
+        <h2>Unidentified Elephant</h2>
+
+        <div class="updown-flex">
+            <p id="currentImageProgressUnknown" class="imageNum">Image #1 (out of {{ images|length }})</p>
+
+            <div class="leftright-flex">
+                <button title="Previous Image" class="leftRightArrowButton" id="previousUnknownImageButton">
+                    <div class="arrow arrow--left"></div>
+                </button>
+
+                <!-- unidentified elephant image -->
+                <div alt="Unidentified Elephant" id="unknownElephantImg"></div>
+
+                <button title="Next Image" class="leftRightArrowButton" id="nextUnknownImageButton">
+                    <div class="arrow arrow--right"></div>
+                </button>
+            </div>
+
+            <div class = "button-column">
+                <a class = "but-icon" href="#popup1">
+                    <ion-icon name="grid" size = "large"></ion-icon>
+                </a>
+            </div>
+            <div id="popup1" class="overlay">
+                <div class="popup">
+                    <h2>Unidentified Elephant</h2>
+                    <br> </br>
+                    <a class="close" href="#">&times; </a>
+                    <div class="content">
+                        <!-- add the media -->
+                        <!-- NEW ROW -->
+                        <div class="row2">
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg" width = "100%">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                            </div>
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                            </div>
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                            </div>
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">    
+                            </div>
+                        </div>
+                        <!-- END ROW -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="seekCode" id="unidentifiedSeekCode">{{ given_code }}</p>
+
+    </div>
+
+
+    
+    <div class="column" style="background-color:#dbdbdb;">
+        <h2 id="currentMatchProgress">Possible Match #1 (out of )</h2>
+
+        <div class="updown-flex">
+
+            <p id="currentImageProgressMatch" class="imageNum">Image #0 (out of {{ images|length }})</p>
+
+            <button title="Previous Match" class="upDownArrowButton" id="previousMatchButton">
+                <div class="arrow arrow--up"></div>
+            </button>
+
+            <div class="leftright-flex">
+                <button title="Previous Image" class="leftRightArrowButton" id="previousKnownImageButton">
+                    <div class="arrow arrow--left"></div>
+                </button>
+                <!-- possible match image -->
+                <div alt="Possible Match" id="possibleMatchImg" class="image"></div>
+
+                <button title="Next Image" class="leftRightArrowButton" id="nextKnownImageButton">
+                    <div class="arrow arrow--right"></div>
+                </button>
+            </div>
+            <button title="Next Match" class="upDownArrowButton" id="nextMatchButton">
+                <div class="arrow arrow--down"></div>
+            </button>
+            
+            <div class = "button-column">
+                <a class = "but-icon" href="#popup1">
+                    <ion-icon name="grid" size = "large"></ion-icon>
+                </a>
+            </div>
+            <div id="popup1" class="overlay">
+                <div class="popup">
+                    <h2>Unidentified Elephant</h2>
+                    <br> </br>
+                    <a class="close" href="#">&times; </a>
+                    <div class="content">
+                        <!-- add the media -->
+                        <!-- NEW ROW -->
+                        <div class="row2">
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg" width = "100%">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                            </div>
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                            </div>
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                            </div>
+                            <div class="column2">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
+                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">    
+                            </div>
+                        </div>
+                        <!-- END ROW -->
+                    </div>
+                </div>
+            </div>      
+
+         
+        </div>
+
+        <div class="leftright-flex">
+            <p class="seekCode" id="matchSeekCode"></p> 
+        </div>
+        
+        <p id="name"> Individual Name: </p>
+        <p id="individualID"> Individual ID: </p>
+        
+        
+
+        <div class="dropdown">
+            <button class="dropbtn" id="score">Score: </button>
+            <div class="dropdown-content">
+                <p>CurvRank Score: N/A</p>
+                <button style="background-color:#343b40; color: white;" onclick="table(this.form)" id="score2">SEEK Score: </button>
+            </div>
+        </div>
+
+        <form id="further_review_form" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Confirm" class="confirmButton">
+        </form>
+
+    </div>
+</div>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<!-- Leaflet core CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+
+<!-- Leaflet Draw CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.3/leaflet.draw.css"/>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<!-- Load React -->
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+
+<!-- Our App javascript file -->
+<script src="{% static 'leaflet.annotation.js' %}"></script>
+
+
+<script type="text/javascript">
+    let imageViewRendered = null;
+
+    var currentMatchIndex = {{ match_index }};
+    var currentKnownIndex = 0;
+    var currentUnknownIndex = 0;
+
+    var images_data = {{ images|safe }};
+    var images_match_data = {{ matchImages|safe }};
+    const given_code = "{{ given_code }}";
+    var results = {{ results_list|safe }};
+    var boxes = {{ boxes|safe }};
+    var matchBoxes = {{ matchBoxes|safe }};
+
+    function loadPage(){
+        viewImage(currentKnownIndex, "possibleMatchImg", "currentImageProgressMatch", "match");
+        viewImage(currentUnknownIndex, "unknownElephantImg", "currentImageProgressUnknown", "unidentified");
+        viewElephantInfo(currentMatchIndex);
+        seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"]);
+
+        // set functionality for confirm button
+        document.getElementById("further_review_form").action = 
+            ["/rcos_match/matching/","{{ individual_id }}", "/", "{{ match_index }}", "/submit"].join("");
+    }
+
+    function viewElephantInfo(matchIndex){
+        //display info for elephant at matchIndex
+        var Elephant = results[matchIndex];
+
+        document.getElementById("currentMatchProgress").innerHTML = "Possible Match #" + (matchIndex + 1) + " (out of " + results.length + ")";
+        document.getElementById("name").innerHTML = "Individual Name: " + Elephant["name"];
+        document.getElementById("individualID").innerHTML = "Individual ID: " + Elephant["id"];
+
+        document.getElementById("matchSeekCode").innerHTML = Elephant["seek_code"];
+        document.getElementById("score").innerHTML = "Score: " + Elephant["score"].toPrecision(4);
+        document.getElementById("score2").innerHTML = "SEEK Score: " + Elephant["score"].toPrecision(4);
+    }
+
+    function seekCodeDifferences(seekCode, matchSeekCode){
+        //displays differences in seek code as red
+        let newCode = "";
+        let newMatchCode = "";
+        for(let i = 0; i < seekCode.length; i++){
+            if(seekCode[i] !== matchSeekCode[i]){
+                newCode += '<span style="color: red;">'+seekCode[i]+'</span>';
+                newMatchCode += '<span style="color: red;">'+matchSeekCode[i]+'</span>';
+            }
+            else{
+                newCode += seekCode[i];
+                newMatchCode += seekCode[i]; 
+            }
+        }
+        document.getElementById("unidentifiedSeekCode").innerHTML = newCode;
+        document.getElementById("matchSeekCode").innerHTML = newMatchCode;
+    }
+    
+    
+    function viewImage(viewImageIndex, imageDivID, imageProgressID, unidentifiedOrMatch){
+        // render the image, with ability to zoom in and out by scrolling
+        let image_info;
+        let existing_annotations;
+
+        if(unidentifiedOrMatch == "unidentified"){
+            image_info = images_data[viewImageIndex];
+            existing_annotations = boxes[image_info.id];
+        }
+        else if(unidentifiedOrMatch == "match"){
+            image_info = images_match_data[viewImageIndex];
+            existing_annotations = matchBoxes[image_info.id];
+        }
+
+        if (imageViewRendered != null) {
+            ReactDOM.unmountComponentAtNode(document.getElementById(imageDivID));
+            imageViewRendered = null;
+        }
+
+        let imageEl = new Image();
+        imageEl.onload = function(){
+            let imageView = React.createElement(document.LeafletAnnotation, {
+                imageElement : imageEl,
+                image : image_info,
+                annotations : existing_annotations,
+                categories : [],
+                options : {
+                    enableBoxEdit : false,
+                    map : {
+                        attributionControl : false,
+                        zoomControl : false,
+                        boxZoom : true,
+                        doubleClickZoom : true,
+                        keyboard : true,
+                        scrollWheelZoom : true
+                    },
+                    renderBoxes : true,
+                    disableSidebar : true
+                }
+            }, null);
+            imageViewRendered = ReactDOM.render(imageView, document.getElementById(imageDivID));
+        }
+        imageEl.src = image_info.url;
+
+        document.getElementById(imageDivID).src = image_info.url;
+        
+        if(unidentifiedOrMatch == "unidentified"){
+            document.getElementById(imageProgressID).innerHTML = "Image #" + (viewImageIndex + 1) + " (out of " + images_data.length + ")";
+        }
+        else if(unidentifiedOrMatch == "match"){
+            document.getElementById(imageProgressID).innerHTML = "Image #" + (viewImageIndex + 1) + " (out of " + images_match_data.length + ")";
+        }
+    }
+
+    // arrow button functionality
+    document.getElementById("nextMatchButton").onclick = function(){
+        currentMatchIndex = (currentMatchIndex + 1) % results.length;
+        window.location.href = '../' + (currentMatchIndex);
+        viewElephantInfo(currentMatchIndex);
+        seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"]);
+    };
+
+    document.getElementById("previousMatchButton").onclick = function(){
+        currentMatchIndex = (currentMatchIndex - 1 + results.length) % results.length;
+        window.location.href = '../' + (currentMatchIndex);
+        viewElephantInfo(currentMatchIndex);
+        seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"])
+    };
+
+    document.getElementById("nextKnownImageButton").onclick = function(){
+        currentKnownIndex = (currentKnownIndex + 1) % images_match_data.length;
+        viewImage(currentKnownIndex, "possibleMatchImg", "currentImageProgressMatch", "match");
+    };
+
+    document.getElementById("previousKnownImageButton").onclick = function(){
+        currentKnownIndex = (currentKnownIndex - 1 + images_match_data.length) % images_match_data.length;
+        viewImage(currentKnownIndex, "possibleMatchImg", "currentImageProgressMatch", "match");
+    };
+
+    document.getElementById("nextUnknownImageButton").onclick = function(){
+        currentUnknownIndex = (currentUnknownIndex + 1) % images_data.length;
+        viewImage(currentUnknownIndex, "unknownElephantImg", "currentImageProgressUnknown", "unidentified");
+    };
+
+    document.getElementById("previousUnknownImageButton").onclick = function(){
+        currentUnknownIndex = (currentUnknownIndex - 1 + images_data.length) % images_data.length;
+        viewImage(currentUnknownIndex, "unknownElephantImg", "currentImageProgressUnknown", "unidentified");
+    };
+
+    // button to open SEEK code comparison table
+    function table(form) {
+        let endpoint = "/rcos_match/table/?";
+        window.open(endpoint, "_blank");
+    }
+
+    // hotkey functionality
+    // arrows for right side elephant
+    // a and d for left side elephant
+    document.onkeyup = function(e) {
+
+        if (e.which == 40) { //next match button (down arrow key)
+            currentMatchIndex = (currentMatchIndex + 1) % results.length;
+            window.location.href = '../' + (currentMatchIndex);
+            viewElephantInfo(currentMatchIndex);
+            seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"]);
+        }
+        else if (e.which == 38) { //previous match button (up arrow key)
+            currentMatchIndex = (currentMatchIndex - 1 + results.length) % results.length;
+            window.location.href = '../' + (currentMatchIndex);
+            viewElephantInfo(currentMatchIndex);
+            seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"])
+        }
+        else if (e.which == 39) { //next known image button (right arrow key)
+            currentKnownIndex = (currentKnownIndex + 1) % images_match_data.length;
+            viewImage(currentKnownIndex, "possibleMatchImg", "currentImageProgressMatch", "match");
+        }
+        else if (e.which == 37) { //previous known image button (left arrow key)
+            currentKnownIndex = (currentKnownIndex - 1 + images_match_data.length) % images_match_data.length;
+            viewImage(currentKnownIndex, "possibleMatchImg", "currentImageProgressMatch", "match");
+        }
+        else if(e.which == 68) { //next unknown image button (d key)
+            currentUnknownIndex = (currentUnknownIndex + 1) % images_data.length;
+            viewImage(currentUnknownIndex, "unknownElephantImg", "currentImageProgressUnknown", "unidentified");
+        }
+        else if(e.which == 65) { //previous unknown image button (a key)
+            currentUnknownIndex = (currentUnknownIndex - 1 + images_data.length) % images_data.length;
+            viewImage(currentUnknownIndex, "unknownElephantImg", "currentImageProgressUnknown", "unidentified");
+        }
+    };
+    
+</script>
+
+</body>
+</html>
+
+{% endblock %}
+

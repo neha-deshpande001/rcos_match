@@ -1,0 +1,332 @@
+:root {
+    --elephant-gray: #343b40;
+    --button-hover-blue: #5864F5;
+    --green: #5fb883;
+}
+
+p, label {
+    font-family: serif;
+}
+
+h1 {
+  text-align: center;
+  font-family: Tahoma, Arial, sans-serif;
+  color: #06D85F;
+  margin: 80px 0;
+}
+
+h2 {
+    font-family: serif;
+    display: flex;
+    justify-content: center;
+}
+
+img {
+    width: 75%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.column {
+    float: left;
+    width: 50%;
+    padding: 10px;
+    height: 950px;
+}
+
+.imageNum{
+    color: gray;
+    text-align: right;
+}
+
+.updown-flex {
+    display: flex;
+    flex-direction: column;
+    margin: 30px;
+    justify-content: center;
+}
+
+.leftright-flex {
+    display: flex;
+    flex-direction: row;
+    margin: 30px;
+    align-items: center;
+}
+
+.upDownArrowButton {
+    padding: 0px;
+    border: none;
+    width: 50px;
+    /*margin centers horizontally*/
+    margin: 0 auto; 
+    display: block;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.leftRightArrowButton {
+    border: none;
+    height: 50px;
+    display: block;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.arrow {
+    border-style: solid;
+    height: 0px;
+    width: 0px;
+    transition-duration: 0.5s;
+}
+
+
+.arrow--up {
+    border-color: transparent transparent var(--elephant-gray) transparent;
+    border-width: 0px 30px 30px;
+}
+.arrow--up:hover {
+    border-color: transparent transparent var(--button-hover-blue) transparent;
+}
+
+
+.arrow--down {
+    border-color: var(--elephant-gray) transparent transparent transparent;
+    border-width: 30px 30px 0px;
+}
+.arrow--down:hover {
+    border-color: var(--button-hover-blue) transparent transparent transparent;
+}
+
+
+.arrow--left {
+    border-color: transparent var(--elephant-gray) transparent transparent;
+    border-width: 30px 30px 30px 0px;
+
+}
+.arrow--left:hover {
+    border-color: transparent var(--button-hover-blue) transparent transparent;
+}
+
+
+.arrow--right {
+    border-color: transparent transparent transparent var(--elephant-gray);
+    border-width: 30px 0px 30px 30px;
+
+}
+.arrow--right:hover {
+    border-color: transparent transparent transparent var(--button-hover-blue);
+}
+
+.confirmButton {
+    background-color: var(--green);
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    width: 20%;
+    font-family: serif;
+    text-align: center;
+    float: right;
+}
+
+.seekCode {
+    font-size: 30px;
+    text-align: center;
+    color: black;
+    /*letter spacing for readability*/
+    letter-spacing: 0.2em;
+}
+
+.name {
+    font-size: 30px;
+    text-align: left;
+    color:black;
+    padding-right: 15px;
+}
+
+.divName {
+    width: 20%;
+    display: inline-block;
+}
+
+.divSeekCode {
+    width: 30%;
+    display: inline-block;
+}
+
+.but-icon{
+    padding: 2px;
+    color: #101010;
+    border: transparent;
+    border-radius: transparent;
+    background-color: transparent;
+    float: right;
+/*    cursor: pointer;
+    transition: all 0.3s ease-out;*/
+}
+
+.button-column{
+    float: right;
+    padding: 10px;
+    right:0;
+}
+
+.but-icon:hover{
+    color: rgb(128,128,128);
+}
+
+/*.but-icon:active{
+    color: #06D85F;
+}*/
+
+
+.button-icon {
+  font-size: 1em;
+  padding: 10px;
+  color: #fff;
+  border: 2px solid #06D85F;
+  border-radius: 20px/50px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+.button-icon:hover {
+  background: #06D85F;
+}
+
+.overlay {
+  overflow-y: scroll;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  overflow-y: scroll;
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px;
+  padding-top: 10px;
+  float: left;
+  padding: 10px;
+  /*padding-left: 20px;*/
+  /*padding: 20px;*/
+  background: #fff;
+  border-radius: 10px;
+  width: 43%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+@media screen and (max-width: 700px){
+  .popup{
+    width: 70%;
+  }
+}
+
+.box {
+  width: 40%;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.2);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/50px;
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.row2 {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 2px;
+}
+
+.column2 {
+  flex: 50%;
+  padding: 2px;
+}
+
+.column2 img {
+  margin-top: 8px;
+  vertical-align: middle;
+}
+
+.dropbtn {
+    padding: 15px;
+    background-color: var(--elephant-gray);
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    font-family: serif;
+    text-align: center;
+    float: left;
+    color: white;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    float: left;
+}
+
+.dropdown-content {
+    padding: 15px;
+    display: none;
+    position: absolute;
+    background-color: var(--elephant-gray);
+    min-width: 300px;
+    z-index: 1;
+    color: white;
+}
+
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: var(--elephant-gray);}
+
+/*displaying images*/
+.leaflet-image-holder{
+    height: 18rem !important;
+    width: 30rem !important;
+    background-color: white;
+    color: white;
+}
+
+
+#unknownElephantImg .leaflet-image-holder{
+    background-color: #ededed;
+}
+
+#possibleMatchImg .leaflet-image-holder{
+    background-color: #dbdbdb;
+}
