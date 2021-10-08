@@ -15,15 +15,25 @@ class Seek_Identity_Form(forms.ModelForm):
             instance.save()
         return instance
 
-class Unknown_Individual_Form(forms.ModelForm):
+class Match_Form(forms.ModelForm):
+    """Form for matching an unknown elephant
+    The `Individual_Sighting` object associated with the unknown elephant is assigned to the `Individual` object associated with the match
+    """
     class Meta:
         model = Individual_Sighting
         fields = ('individual',)
 
-class Selected_Match_Individual_Form(forms.ModelForm):
-    class Meta:
-        model = Individual_Sighting
-        fields = ('individual',)
+    indiv = None
+    indiv_sight = None
+
+    def __init__(self, *args, **kwargs):
+        indiv = kwargs.pop('indiv', None)
+        indiv_sight = kwargs.pop('indiv_sight', None)
+        super(Match_Form, self).__init__(*args, **kwargs)
+        if indiv:
+            self.fields['indiv'].initial = indiv
+        if indiv_sight:
+            self.fields['indiv_sight'].initial = indiv_sight
 
 class Further_Review_Form(forms.ModelForm):
     class Meta:
