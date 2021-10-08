@@ -18,13 +18,12 @@ def get_individual_seek():
         if individual.individual_sighting_set.count()
     ]
 
-
 def matching(request, individual_id, match_index):
 
-    individual_sighting = get_object_or_404(
+    individual_sighting_unknown = get_object_or_404(
         Individual_Sighting, pk=individual_id)
 
-    bbox_set = individual_sighting.sighting_bounding_box_set.all()
+    bbox_set = individual_sighting_unknown.sighting_bounding_box_set.all()
 
     images = [{'id': bbox.photo.image.name,
                'url': bbox.photo.compressed_image.url,
@@ -37,8 +36,7 @@ def matching(request, individual_id, match_index):
 
     given_code = Seek_Identity_Form(request.GET).save(commit=False)
     str_given_code = str(given_code)
-
-    seek_identities = np.array(get_individual_seek(), dtype=object)
+    seek_identities = np.array(Seek_Identity.objects.all(), dtype=object)
     codes = np.array([np.array(code) for code in seek_identities])
 
     if 'binary' in request.GET and request.GET['binary'] == 'on':
@@ -71,9 +69,13 @@ def matching(request, individual_id, match_index):
         results_list.append(temp_dict)
 
 
-    individual_id_match = results_list[match_index]['id']
+    individual_sighting_id_match = results_list[match_index]['id']
     individual_sighting = get_object_or_404(
-        Individual_Sighting, pk=individual_id_match)
+        Individual_Sighting, pk=individual_sighting_id_match)
+    individual_id_match = individual_sighting.individual.id
+    print(individual_id_match)
+    indiv = get_object_or_404(
+        Individual, pk=individual_id_match)
 
     bbox_set = individual_sighting.sighting_bounding_box_set.all()
 
@@ -86,6 +88,7 @@ def matching(request, individual_id, match_index):
         'category_id': 1
     }] for bbox in bbox_set}
 
+    match_form = Match_Form(indiv_sight=individual_sighting_unknown,indiv=indiv)
     context = {
         'results_list': json.dumps(results_list), # to use in javascript
         'results': results, # to use in html
@@ -93,14 +96,13 @@ def matching(request, individual_id, match_index):
         'matchImages': json.dumps(matchImages),
         'given_code': str_given_code,
         'match_index': match_index,
-        'form': Further_Review_Form(),
+        'form': match_form,
         'individual_id': individual_id,
         'boxes': json.dumps(boxes),
         'matchBoxes': json.dumps(matchBoxes),
     }
 
-    return render(request, 'rcos_match/matching/index.html', context)
-
+    return render(request, 'matching/index.html', context)
 
 def matching_submit(request, individual_id, match_index):
     if request.method == 'POST':
@@ -113,6 +115,7 @@ def matching_submit(request, individual_id, match_index):
         indiv_sight.save()
         
     return redirect(individual_sighting_list)
+
 
 # def matching_submit(request, individual_id, match_index):
 #     individual_sighting = get_object_or_404(
@@ -127,7 +130,7 @@ def matching_submit(request, individual_id, match_index):
 
 #     given_code = Seek_Identity_Form(request.GET).save(commit=False)
 #     str_given_code = str(given_code)
-#     seek_identities = np.array(get_individual_seek(), dtype=object)
+#     seek_identities = np.array(Seek_Identity.objects.all(), dtype=object)
 #     codes = np.array([np.array(code) for code in seek_identities])
 
 #     if 'binary' in request.GET and request.GET['binary'] == 'on':
@@ -165,6 +168,7 @@ def matching_submit(request, individual_id, match_index):
 #     individual_sighting_match = get_object_or_404(
 #         Individual_Sighting, pk=individual_id_match)
 
+
 #     if request.method == 'POST':
 #         # Unknown Individual
 #         form = Unknown_Individual_Form(request.POST, instance=individual_sighting)
@@ -186,6 +190,7 @@ def matching_submit(request, individual_id, match_index):
 
 def table(request):
     context = {
-        'tabledata': get_individual_seek()
+        'tabledata':Seek_Identity.objects.all()
     }
-    return render(request, "rcos_match/table/seek_table.html", context)
+    return render(request,"table/seek_table.html",context)
+
