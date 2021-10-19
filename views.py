@@ -19,6 +19,51 @@ def get_individual_seek():
     ]
 
 
+def get_results(request, codes, given_code, seek_identities, match_index):
+    if 'binary' in request.GET and request.GET['binary'] == 'on':
+        total_match = np.all((codes == given_code) | (
+            codes == '?') | (np.array(given_code) == '?'), axis=1)
+        seek_identities = seek_identities[total_match]
+        codes = codes[total_match]
+
+    if 'individual' in request.GET:
+        total_match = np.array([seek_identity.individual_sighting.individual is not None and
+                                seek_identity.individual_sighting.individual.pk ==
+                                int(request.GET['individual'])
+                                for seek_identity in seek_identities])
+        seek_identities = seek_identities[total_match]
+        codes = codes[total_match]
+
+    scores = np.mean(codes == given_code, axis=1) - \
+        0.4*np.mean(codes == '?', axis=1)
+
+    results = np.column_stack((scores, seek_identities))[np.argsort(-scores)]
+    results_list = list()
+
+    for score, seek in results:
+        temp_dict = {'seek_code': str(seek), 'score': score}
+
+        if seek.individual_sighting.individual:
+            temp_dict['name'] = seek.individual_sighting.individual.name
+        else:
+            temp_dict['name'] = "Unknown"
+        temp_dict['id'] = seek.individual_sighting.id
+        results_list.append(temp_dict)
+
+
+    individual_sighting_id_match = results_list[match_index]['id']
+    individual_sighting = get_object_or_404(Individual_Sighting, pk=individual_sighting_id_match)
+    individual_id_match = 0
+    if individual_sighting.individual:
+        individual_id_match = individual_sighting.individual.id
+
+    indiv = get_object_or_404(Individual, pk=individual_id_match)
+    
+    bbox_set = individual_sighting.sighting_bounding_box_set.all()
+
+    return results, results_list, indiv, bbox_set
+
+
 def matching(request, individual_id, match_index):
 
     # get the unknown elephant's Individual_Sighting
@@ -40,61 +85,13 @@ def matching(request, individual_id, match_index):
 
     
     # get Seek_Identity of existing Individuals' most recent Individual_Sighting
-    individuals = np.array(Individual.objects.all(), dtype=object)
-    seek_identities = []
-    for i in individuals:
-        try:
-            last_individual_sighting = i.individual_sighting_set.latest()
-        except Individual_Sighting.DoesNotExist:
-            last_individual_sighting = None
-
-        if last_individual_sighting:
-            seek_identities.append(last_individual_sighting.seek_identity)
-
-    seek_identities = np.array(seek_identities,dtype=object) # convert to numpy array
+    seek_identities = np.array(get_individual_seek(), dtype=object)
     codes = np.array([np.array(code) for code in seek_identities])
 
-    if 'binary' in request.GET and request.GET['binary'] == 'on':
-        total_match = np.all((codes == given_code) | (
-            codes == '?') | (np.array(given_code) == '?'), axis=1)
-        seek_identities = seek_identities[total_match]
-        codes = codes[total_match]
 
-    if 'individual' in request.GET:
-        total_match = np.array([seek_identity.individual_sighting.individual is not None and
-                                seek_identity.individual_sighting.individual.pk ==
-                                int(request.GET['individual'])
-                                for seek_identity in seek_identities])
-        seek_identities = seek_identities[total_match]
-        codes = codes[total_match]
-
-    scores = np.mean(codes == given_code, axis=1) - \
-        0.4*np.mean(codes == '?', axis=1)
-
-    results = np.column_stack((scores, seek_identities))[np.argsort(-scores)]
-    results_list = list()
-    
-
-    for score, seek in results:
-        temp_dict = {'seek_code': str(seek), 'score': score}
-
-        if seek.individual_sighting.individual:
-            temp_dict['name'] = seek.individual_sighting.individual.name
-        else:
-            temp_dict['name'] = "Unknown"
-        temp_dict['id'] = seek.individual_sighting.id
-        results_list.append(temp_dict)
+    results, results_list, indiv, bbox_set = get_results(request, codes, given_code, seek_identities, match_index)
 
 
-    individual_sighting_id_match = results_list[match_index]['id']
-    individual_sighting = get_object_or_404(Individual_Sighting, pk=individual_sighting_id_match)
-    individual_id_match = 0
-    if individual_sighting.individual:
-        individual_id_match = individual_sighting.individual.id
-
-    indiv = get_object_or_404(Individual, pk=individual_id_match)
-
-    bbox_set = individual_sighting.sighting_bounding_box_set.all()
 
     matchImages = [{'id': bbox.photo.image.name,
                'url': bbox.photo.compressed_image.url,
@@ -132,63 +129,10 @@ def matching_submit(request, individual_id, match_index):
     given_code = Seek_Identity_Form(request.GET).save(commit=False)
 
     # get Seek_Identity of existing Individuals' most recent Individual_Sighting
-    individuals = np.array(Individual.objects.all(), dtype=object)
-    seek_identities = []
-    for i in individuals:
-        # ensure that a sighting exists for this individual
-        try:
-            last_individual_sighting = i.individual_sighting_set.latest()
-        except Individual_Sighting.DoesNotExist:
-            last_individual_sighting = None
-
-        if last_individual_sighting:
-            seek_identities.append(last_individual_sighting.seek_identity)
-
-    seek_identities = np.array(seek_identities,dtype=object) # convert to numpy array
-    
+    seek_identities = np.array(get_individual_seek(), dtype=object)
     codes = np.array([np.array(code) for code in seek_identities])
 
-    if 'binary' in request.GET and request.GET['binary'] == 'on':
-        total_match = np.all((codes == given_code) | (
-            codes == '?') | (np.array(given_code) == '?'), axis=1)
-        seek_identities = seek_identities[total_match]
-        codes = codes[total_match]
-
-    if 'individual' in request.GET:
-        total_match = np.array([seek_identity.individual_sighting.individual is not None and
-                                seek_identity.individual_sighting.individual.pk ==
-                                int(request.GET['individual'])
-                                for seek_identity in seek_identities])
-        seek_identities = seek_identities[total_match]
-        codes = codes[total_match]
-
-    scores = np.mean(codes == given_code, axis=1) - \
-        0.4*np.mean(codes == '?', axis=1)
-
-    results = np.column_stack((scores, seek_identities))[np.argsort(-scores)]
-    results_list = list()
-    
-
-    for score, seek in results:
-        temp_dict = {'seek_code': str(seek), 'score': score}
-
-        if seek.individual_sighting.individual:
-            temp_dict['name'] = seek.individual_sighting.individual.name
-        else:
-            temp_dict['name'] = "Unknown"
-        temp_dict['id'] = seek.individual_sighting.id
-        results_list.append(temp_dict)
-
-
-    individual_sighting_id_match = results_list[match_index]['id']
-    individual_sighting = get_object_or_404(Individual_Sighting, pk=individual_sighting_id_match)
-    individual_id_match = 0
-    if individual_sighting.individual:
-        individual_id_match = individual_sighting.individual.id
-
-    indiv = get_object_or_404(Individual, pk=individual_id_match)
-
-
+    _, _, indiv, _ = get_results(request, codes, given_code, seek_identities, match_index)
 
     if request.method == 'POST':
         # assign the individual sighting to the individual
