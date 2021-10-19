@@ -7,7 +7,7 @@ import json
 import numpy as np
 
 from eb_core.models import Individual_Sighting, Seek_Identity, Individual
-from eb_core.views import individual_sighting_list
+from eb_core.views import individual_sighting_unidentified
 from .forms import *
 from .models import *
 
@@ -139,7 +139,7 @@ def matching_submit(request, individual_id, match_index):
         indiv_sight.individual = indiv
         indiv_sight.save()
         
-    return redirect(individual_sighting_list)
+    return redirect(individual_sighting_unidentified)
 
 
 
