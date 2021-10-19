@@ -150,7 +150,7 @@
         </div>
         
         <p id="name"> Individual Name: </p>
-        <p id="individualID"> Individual ID: </p>
+        <p id="individualSightingID"> Individual Sighting ID: </p>
         
         
 
@@ -221,15 +221,15 @@
 
     function viewElephantInfo(matchIndex){
         //display info for elephant at matchIndex
-        var Elephant = results[matchIndex];
+        var ElephantSighting = results[matchIndex];
 
         document.getElementById("currentMatchProgress").innerHTML = "Possible Match #" + (matchIndex + 1) + " (out of " + results.length + ")";
-        document.getElementById("name").innerHTML = "Individual Name: " + Elephant["name"];
-        document.getElementById("individualID").innerHTML = "Individual ID: " + Elephant["id"];
+        document.getElementById("name").innerHTML = "Individual Name: " + ElephantSighting["name"];
+        document.getElementById("individualSightingID").innerHTML = "Individual Sighting ID: " + ElephantSighting["id"];
 
-        document.getElementById("matchSeekCode").innerHTML = Elephant["seek_code"];
-        document.getElementById("score").innerHTML = "Score: " + Elephant["score"].toPrecision(4);
-        document.getElementById("score2").innerHTML = "SEEK Score: " + Elephant["score"].toPrecision(4);
+        document.getElementById("matchSeekCode").innerHTML = ElephantSighting["seek_code"];
+        document.getElementById("score").innerHTML = "Score: " + ElephantSighting["score"].toPrecision(4);
+        document.getElementById("score2").innerHTML = "SEEK Score: " + ElephantSighting["score"].toPrecision(4);
     }
 
     function seekCodeDifferences(seekCode, matchSeekCode){

@@ -22,13 +22,13 @@ class Match_Form(forms.ModelForm):
     class Meta:
         model = Individual_Sighting
         fields = ('individual',)
-
-    indiv = None
-    indiv_sight = None
+        # fields = '__all__'
+    # indiv = None
+    # indiv_sight = None
 
     def __init__(self, *args, **kwargs):
-        indiv = kwargs.pop('indiv', None)
-        indiv_sight = kwargs.pop('indiv_sight', None)
+        self.indiv = kwargs.pop('indiv', None)
+        self.indiv_sight = kwargs.pop('indiv_sight', None)
         super(Match_Form, self).__init__(*args, **kwargs)
         # if indiv:
         #     self.fields['indiv'].initial = indiv

@@ -18,6 +18,8 @@ def get_individual_seek():
         if individual.individual_sighting_set.count()
     ]
 
+match_form = Match_Form()
+
 def matching(request, individual_id, match_index):
 
     # get the unknown elephant's Individual_Sighting
@@ -52,8 +54,11 @@ def matching(request, individual_id, match_index):
             seek_identities.append(last_individual_sighting.seek_identity)
 
     seek_identities = np.array(seek_identities,dtype=object) # convert to numpy array
-
-
+    print("gender?",seek_identities[0].gender)
+    print("age?",seek_identities[0].age)
+    print("seek?",seek_identities[0])
+    print("name?",seek_identities[0].individual_sighting.individual.name)
+    print("id?",seek_identities[0].individual_sighting.id)
     codes = np.array([np.array(code) for code in seek_identities])
 
     if 'binary' in request.GET and request.GET['binary'] == 'on':
@@ -109,8 +114,9 @@ def matching(request, individual_id, match_index):
         'category_id': 1
     }] for bbox in bbox_set}
 
-    match_form = Match_Form(indiv_sight=individual_sighting_unknown,indiv=indiv)
-
+    match_form = Match_Form(indiv=indiv,indiv_sight=individual_sighting_unknown)
+    print("match_form.indiv",match_form.indiv)
+    print("match_form.indiv_sight",match_form.indiv_sight)
     context = {
         'results_list': json.dumps(results_list), # to use in javascript
         'results': results, # to use in html
@@ -128,10 +134,12 @@ def matching(request, individual_id, match_index):
 
 def matching_submit(request, individual_id, match_index):
     if request.method == 'POST':
-        form = Match_Form(request.POST)
-        # print("form.data:",form)
-        indiv = form.data['indiv']
-        indiv_sight = form.data['indiv_sight']
+
+        indiv = match_form.indiv
+        indiv_sight = match_form.indiv_sight
+
+        print("indiv",indiv) # indiv is None
+        print("indiv_sight",indiv_sight) # indiv_sight is None
 
         indiv_sight.individual = indiv
         indiv_sight.save()
