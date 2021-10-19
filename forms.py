@@ -30,10 +30,10 @@ class Match_Form(forms.ModelForm):
         indiv = kwargs.pop('indiv', None)
         indiv_sight = kwargs.pop('indiv_sight', None)
         super(Match_Form, self).__init__(*args, **kwargs)
-        if indiv:
-            self.fields['indiv'].initial = indiv
-        if indiv_sight:
-            self.fields['indiv_sight'].initial = indiv_sight
+        # if indiv:
+        #     self.fields['indiv'].initial = indiv
+        # if indiv_sight:
+        #     self.fields['indiv_sight'].initial = indiv_sight
 
 class Further_Review_Form(forms.ModelForm):
     class Meta:
