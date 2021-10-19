@@ -8,8 +8,11 @@
 <html>
 <body onload="loadPage()">
 
-<div>
 
+
+
+
+<div>
     <div class="column" style="background-color:#ededed;"> 
         <h2>Unidentified Elephant</h2>
 
@@ -29,45 +32,36 @@
                 </button>
             </div>
 
-            <div class = "button-column">
-                <a class = "but-icon" href="#popup1">
-                    <ion-icon name="grid" size = "large"></ion-icon>
-                </a>
-            </div>
-            <div id="popup1" class="overlay">
-                <div class="popup">
-                    <h2>Unidentified Elephant</h2>
-                    <br> </br>
-                    <a class="close" href="#">&times; </a>
-                    <div class="content">
-                        <!-- add the media -->
-                        <!-- NEW ROW -->
-                        <div class="row2">
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg" width = "100%">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                            </div>
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                            </div>
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                            </div>
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">    
-                            </div>
-                        </div>
-                        <!-- END ROW -->
+
+            <!-- start thumbnail view -->
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#photoGallery1" aria-expanded="false" aria-controls="collapseExample">
+                Expand Photo Gallery
+            </button>
+            <div class="collapse" id="photoGallery1">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    {% for k, images in known_thumbnails.items %}
+                        {% if forloop.first %}
+                            <a class="nav-item nav-link {{ forloop.first|yesno:'active,' }}" id="gallery-0-tab" data-toggle="tab" href="#gallery-0" role="tab" aria-controls="nav-home" aria-selected="true">{{ k }} ({{ images|length }})</a>
+                        {% else %}
+                            <a class="nav-item nav-link" id="gallery-{{ forloop.counter0 }}-tab" data-toggle="tab" href="#gallery-{{ forloop.counter0 }}" role="tab" aria-controls="nav-home" aria-selected="true">{{ k }} ({{ images|length }})</a>
+                        {% endif %}
+                    {% endfor %}
                     </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    {% for _, images in known_thumbnails.items %}
+                        <div class="tab-pane fade {{ forloop.first|yesno:'show active,' }}" id="gallery-{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="gallery-{{ forloop.counter0 }}-tab">
+                        {% for image_id, image in images.items %}
+                            <img src="{{ image }}" style="width: 100px" onclick="currentImageIndex={{ image_id }}; viewImage(image_id, 'unknownElephantImg', 'currentImageProgressUnknown', 'unidentified');">
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
+            <!-- end thumbnail view -->
+        
+
         </div>
 
         <p class="seekCode" id="unidentifiedSeekCode">{{ given_code }}</p>
@@ -102,47 +96,33 @@
                 <div class="arrow arrow--down"></div>
             </button>
             
-            <div class = "button-column">
-                <a class = "but-icon" href="#popup1">
-                    <ion-icon name="grid" size = "large"></ion-icon>
-                </a>
-            </div>
-            <div id="popup1" class="overlay">
-                <div class="popup">
-                    <h2>Unidentified Elephant</h2>
-                    <br> </br>
-                    <a class="close" href="#">&times; </a>
-                    <div class="content">
-                        <!-- add the media -->
-                        <!-- NEW ROW -->
-                        <div class="row2">
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg" width = "100%">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                            </div>
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                            </div>
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                            </div>
-                            <div class="column2">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">
-                                <img src="https://cdn.pixabay.com/photo/2016/11/14/04/45/elephant-1822636_1280.jpg">    
-                            </div>
-                        </div>
-                        <!-- END ROW -->
+            <!-- start thumbnail view -->
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#photoGallery2" aria-expanded="false" aria-controls="collapseExample">
+                Expand Photo Gallery
+            </button>
+            <div class="collapse" id="photoGallery2">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    {% for k, images in known_thumbnails.items %}
+                        {% if forloop.first %}
+                            <a class="nav-item nav-link {{ forloop.first|yesno:'active,' }}" id="gallery-0-tab" data-toggle="tab" href="#gallery-0" role="tab" aria-controls="nav-home" aria-selected="true">{{ k }} ({{ images|length }})</a>
+                        {% else %}
+                            <a class="nav-item nav-link" id="gallery-{{ forloop.counter0 }}-tab" data-toggle="tab" href="#gallery-{{ forloop.counter0 }}" role="tab" aria-controls="nav-home" aria-selected="true">{{ k }} ({{ images|length }})</a>
+                        {% endif %}
+                    {% endfor %}
                     </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    {% for _, images in known_thumbnails.items %}
+                        <div class="tab-pane fade {{ forloop.first|yesno:'show active,' }}" id="gallery-{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="gallery-{{ forloop.counter0 }}-tab">
+                        {% for image_id, image in images.items %}
+                            <img src="{{ image }}" style="width: 100px" onclick="currentImageIndex={{ image_id }}; viewImage(image_id, 'possibleMatchImg', 'currentImageProgressMatch', 'match');">
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
                 </div>
-            </div>      
-
-         
+            </div>
+            <!-- end thumbnail view -->         
         </div>
 
         <div class="leftright-flex">
@@ -201,6 +181,9 @@
     var currentKnownIndex = 0;
     var currentUnknownIndex = 0;
 
+    var known_thumbnails = {{ known_thumbnails | safe }};
+    var unknown_thumbnails = {{ unknown_thumbnails | safe }};
+
     var images_data = {{ images|safe }};
     var images_match_data = {{ matchImages|safe }};
     const given_code = "{{ given_code }}";
@@ -209,6 +192,8 @@
     var matchBoxes = {{ matchBoxes|safe }};
 
     function loadPage(){
+        console.log(known_thumbnails)
+        console.log(unknown_thumbnails)
         viewImage(currentKnownIndex, "possibleMatchImg", "currentImageProgressMatch", "match");
         viewImage(currentUnknownIndex, "unknownElephantImg", "currentImageProgressUnknown", "unidentified");
         viewElephantInfo(currentMatchIndex);

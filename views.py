@@ -6,7 +6,7 @@ from django.urls import reverse
 import json
 import numpy as np
 
-from eb_core.models import Individual_Sighting, Seek_Identity, Individual
+from eb_core.models import Individual_Sighting, Seek_Identity, Individual, Sighting_Photo
 from eb_core.views import individual_sighting_unidentified
 from .forms import *
 from .models import *
@@ -59,9 +59,8 @@ def get_results(request, codes, given_code, seek_identities, match_index):
 
     indiv = get_object_or_404(Individual, pk=individual_id_match)
 
-    bbox_set = individual_sighting.sighting_bounding_box_set.all()
 
-    return results, results_list, indiv, bbox_set
+    return results, results_list, indiv, individual_sighting
 
 
 def matching(request, individual_id, match_index):
@@ -89,9 +88,18 @@ def matching(request, individual_id, match_index):
     codes = np.array([np.array(code) for code in seek_identities])
 
 
-    results, results_list, indiv, bbox_set = get_results(request, codes, given_code, seek_identities, match_index)
+    results, results_list, indiv, individual_sighting = get_results(request, codes, given_code, seek_identities, match_index)
+    bbox_set = individual_sighting.sighting_bounding_box_set.all()
 
-
+    print("individual_sighting",individual_sighting)
+    print("individual_sighting_unknown",individual_sighting_unknown)
+    
+    known_thumbnails = {
+        individual_sighting.group_sighting.earthranger_serial:
+        {i: Sighting_Photo.objects.get(image=image['id']).thumbnail.url
+         for i, image in enumerate(images)}
+    }
+    print("len(known_thumbnails)",len(known_thumbnails))
 
     matchImages = [{'id': bbox.photo.image.name,
                'url': bbox.photo.compressed_image.url,
@@ -102,7 +110,14 @@ def matching(request, individual_id, match_index):
         'category_id': 1
     }] for bbox in bbox_set}
 
+    unknown_thumbnails = {
+        individual_sighting_unknown.group_sighting.earthranger_serial:
+        {i: Sighting_Photo.objects.get(image=image['id']).thumbnail.url
+         for i, image in enumerate(images)}
+    }
 
+    print("unknown_thumbnails",unknown_thumbnails)
+    print("known_thumbnails",known_thumbnails)
     context = {
         'results_list': json.dumps(results_list), # to use in javascript
         'results': results, # to use in html
@@ -114,6 +129,8 @@ def matching(request, individual_id, match_index):
         'individual_id': individual_id,
         'boxes': json.dumps(boxes),
         'matchBoxes': json.dumps(matchBoxes),
+        'unknown_thumbnails': unknown_thumbnails,
+        'known_thumbnails': known_thumbnails,
     }
 
     return render(request, 'rcos_match/matching/index.html', context)
