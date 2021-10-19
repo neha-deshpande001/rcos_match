@@ -58,7 +58,7 @@ def get_results(request, codes, given_code, seek_identities, match_index):
         individual_id_match = individual_sighting.individual.id
 
     indiv = get_object_or_404(Individual, pk=individual_id_match)
-    
+
     bbox_set = individual_sighting.sighting_bounding_box_set.all()
 
     return results, results_list, indiv, bbox_set
@@ -102,7 +102,6 @@ def matching(request, individual_id, match_index):
         'category_id': 1
     }] for bbox in bbox_set}
 
-    match_form = Match_Form(indiv=indiv,indiv_sight=individual_sighting_unknown)
 
     context = {
         'results_list': json.dumps(results_list), # to use in javascript
@@ -111,7 +110,7 @@ def matching(request, individual_id, match_index):
         'matchImages': json.dumps(matchImages),
         'given_code': str_given_code,
         'match_index': match_index,
-        'form': match_form,
+        'form': Completed_Form(),
         'individual_id': individual_id,
         'boxes': json.dumps(boxes),
         'matchBoxes': json.dumps(matchBoxes),
@@ -134,13 +133,20 @@ def matching_submit(request, individual_id, match_index):
 
     _, _, indiv, _ = get_results(request, codes, given_code, seek_identities, match_index)
 
+    form = Completed_Form(request.POST or None)
+
     if request.method == 'POST':
+        if form.is_valid():
+            # completed checkbox
+            is_complete = request.POST.get('completed', False)
+            is_complete = True if is_complete == 'on' else False
+            indiv_sight.completed = is_complete
+
         # assign the individual sighting to the individual
         indiv_sight.individual = indiv
         indiv_sight.save()
         
     return redirect(individual_sighting_unidentified)
-
 
 
 def table(request):

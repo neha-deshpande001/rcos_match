@@ -162,7 +162,7 @@
             </div>
         </div>
 
-        <form id="further_review_form" method="post">
+        <form id="form" method="post">
             {% csrf_token %}
             {{ form }}
             <input type="submit" value="Confirm" class="confirmButton">
@@ -215,7 +215,7 @@
         seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"]);
 
         // set functionality for confirm button
-        document.getElementById("further_review_form").action = 
+        document.getElementById("form").action = 
             ["/rcos_match/matching/","{{ individual_id }}", "/", "{{ match_index }}", "/submit"].join("");
     }
 
