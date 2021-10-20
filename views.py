@@ -137,7 +137,7 @@ def matching_submit(request, individual_id, match_index):
     # get the unknown elephant's Individual_Sighting
     indiv_sight = get_object_or_404(Individual_Sighting, pk=individual_id)
 
-    given_code = individual_sighting_unknown.seek_identity
+    given_code = indiv_sight.seek_identity
 
     # get Seek_Identity of existing Individuals' most recent Individual_Sighting
     seek_identities = np.array(get_individual_seek(), dtype=object)
