@@ -163,7 +163,7 @@ def matching_submit(request, individual_id, match_index):
 
 def table(request):
     context = {
-        'tabledata': get_individual_seek()
+        'tabledata':Seek_Identity.objects.all()
     }
     return render(request,"rcos_match/table/seek_table.html",context)
 
