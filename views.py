@@ -91,16 +91,6 @@ def matching(request, individual_id, match_index):
     results, results_list, indiv, individual_sighting = get_results(request, codes, given_code, seek_identities, match_index)
     bbox_set = individual_sighting.sighting_bounding_box_set.all()
 
-    print("individual_sighting",individual_sighting)
-    print("individual_sighting_unknown",individual_sighting_unknown)
-    
-    known_thumbnails = {
-        individual_sighting.group_sighting.earthranger_serial:
-        {i: Sighting_Photo.objects.get(image=image['id']).thumbnail.url
-         for i, image in enumerate(images)}
-    }
-    print("len(known_thumbnails)",len(known_thumbnails))
-
     matchImages = [{'id': bbox.photo.image.name,
                'url': bbox.photo.compressed_image.url,
                'full_res': bbox.photo.image.url} for bbox in bbox_set]
@@ -110,14 +100,19 @@ def matching(request, individual_id, match_index):
         'category_id': 1
     }] for bbox in bbox_set}
 
+
+    known_thumbnails = {
+        individual_sighting.group_sighting.earthranger_serial:
+        {i: Sighting_Photo.objects.get(image=image['id']).thumbnail.url
+         for i, image in enumerate(matchImages)}
+    }
     unknown_thumbnails = {
         individual_sighting_unknown.group_sighting.earthranger_serial:
         {i: Sighting_Photo.objects.get(image=image['id']).thumbnail.url
          for i, image in enumerate(images)}
     }
 
-    print("unknown_thumbnails",unknown_thumbnails)
-    print("known_thumbnails",known_thumbnails)
+
     context = {
         'results_list': json.dumps(results_list), # to use in javascript
         'results': results, # to use in html
@@ -129,8 +124,8 @@ def matching(request, individual_id, match_index):
         'individual_id': individual_id,
         'boxes': json.dumps(boxes),
         'matchBoxes': json.dumps(matchBoxes),
-        'unknown_thumbnails': unknown_thumbnails,
         'known_thumbnails': known_thumbnails,
+        'unknown_thumbnails': unknown_thumbnails,
     }
 
     return render(request, 'rcos_match/matching/index.html', context)
