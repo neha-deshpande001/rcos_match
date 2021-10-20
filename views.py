@@ -79,7 +79,7 @@ def matching(request, individual_id, match_index):
         'category_id': 1
     }] for bbox in bbox_set}
 
-    given_code = Seek_Identity_Form(request.GET).save(commit=False)
+    given_code = individual_sighting_unknown.seek_identity
     str_given_code = str(given_code)
 
     
@@ -137,7 +137,7 @@ def matching_submit(request, individual_id, match_index):
     # get the unknown elephant's Individual_Sighting
     indiv_sight = get_object_or_404(Individual_Sighting, pk=individual_id)
 
-    given_code = Seek_Identity_Form(request.GET).save(commit=False)
+    given_code = individual_sighting_unknown.seek_identity
 
     # get Seek_Identity of existing Individuals' most recent Individual_Sighting
     seek_identities = np.array(get_individual_seek(), dtype=object)
