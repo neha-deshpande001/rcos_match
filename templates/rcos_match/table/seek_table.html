@@ -12,10 +12,28 @@
 <html>
     <head>
         <title>Seek table</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap4.min.css" />
     </head>
     <body>
-        {% render_table tabledata %}
+        <!-- {% render_table tabledata %} -->
+
+        <table id="seekTable" style="font-family:'monospace';" border="1" class="table">
+            <tr>
+                <th>Individual Name</th>
+                <th>Individual ID</th>
+                <th>SEEK Code</th>
+            </tr>
+        <script type="text/javascript">
+            var array = {{seek_identities|safe}}
+            seekTable = document.getElementById('seekTable');
+            for(var i = 0; i < array.length; i++){
+                var newRow = seekTable.insertRow(seekTable.length);
+                for(var j = 0; j < array[i].length; j++){
+                    var cell = newRow.insertCell(j);
+                    cell.innerHTML = array[i][j];
+                }
+            }
+
+        </script>
     </body>
 </html>
 

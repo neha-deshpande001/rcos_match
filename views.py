@@ -162,8 +162,20 @@ def matching_submit(request, individual_id, match_index):
 
 
 def table(request):
+    results, results_list, indiv, individual_sighting = get_results(request, codes, given_code, seek_identities, 0)
+
+
+    seek_identities = get_individual_seek()
+    codes = np.array([np.array(code) for code in seek_identities])
+    print(codes)
+
+    table_data = []
+    for i in seek_identities:
+        temp = [i.individual_sighting.individual.name,i.individual_sighting.individual.id, " ".join(str(i))]
+        table_data.append(temp)
     context = {
-        'tabledata':Seek_Identity.objects.all()
+        'tabledata':Seek_Identity.objects.all(),
+        'seek_identities':table_data
     }
     return render(request,"rcos_match/table/seek_table.html",context)
 
