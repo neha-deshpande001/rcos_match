@@ -115,7 +115,6 @@ def matching(request, individual_id, match_index):
 
     context = {
         'results_list': json.dumps(results_list), # to use in javascript
-        'results': results, # to use in html
         'images': json.dumps(images),
         'matchImages': json.dumps(matchImages),
         'given_code': str_given_code,
@@ -168,9 +167,6 @@ def table(request, individual_id):
 
     given_code = indiv_sight.seek_identity
 
-
-
-
     # seek_identities = get_individual_seek()
     seek_identities = np.array(get_individual_seek(), dtype=object)
 
@@ -181,12 +177,10 @@ def table(request, individual_id):
     for score, seek in results:
         temp = [seek.individual_sighting.individual.name, seek.individual_sighting.individual.id, "{0:0.4f}".format(score), " ".join(str(seek))]
         table_data.append(temp)
-    print(given_code)
+
     context = {
-        'tabledata':Seek_Identity.objects.all(),
         'table_data':table_data,
         'given_code':" ".join(str(given_code))
-
     }
     return render(request,"rcos_match/table/seek_table.html",context)
 

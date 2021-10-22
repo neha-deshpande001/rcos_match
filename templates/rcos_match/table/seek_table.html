@@ -14,9 +14,9 @@
         <title>Seek table</title>
     </head>
     <body>
-        <!-- {% render_table tabledata %} -->
+
         <br>
-        <h3 id="given_code">Unknown Individual's SEEK Code:</h3>
+        <h3 id="given_code">Unidentified Individual's SEEK Code:</h3>
         <br>
 
         <table id="seekTable" style="font-family:'monospace';" border="2" class="table">
@@ -26,7 +26,10 @@
                 <th>Score</th>
                 <th>SEEK Code</th>
             </tr>
+
         <script type="text/javascript">
+            document.getElementById("given_code").innerHTML = "Unidentified Individual's SEEK Code: " + "{{ given_code }}";
+
             var array = {{table_data|safe}}
             seekTable = document.getElementById('seekTable');
             for(var i = 0; i < array.length; i++){
@@ -36,8 +39,6 @@
                     cell.innerHTML = array[i][j];
                 }
             }
-            document.getElementById("given_code").innerHTML = "Unknown Individual's SEEK Code: " + "{{ given_code }}";
-
 
         </script>
     </body>

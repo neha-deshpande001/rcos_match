@@ -139,7 +139,7 @@
             <button class="dropbtn" id="score">Score: </button>
             <div class="dropdown-content">
                 <p>CurvRank Score: N/A</p>
-                <button class="seekScoreButton" onclick="table(this.form)" id="score2">SEEK Score: </button>
+                <button class="seekScoreButton" onclick="table()" id="score2">SEEK Score: </button>
             </div>
         </div>
 
@@ -321,7 +321,7 @@
     };
 
     // button to open SEEK code comparison table
-    function table(form) {
+    function table() {
         let endpoint = "/rcos_match/table/" + {{individual_id}};
         console.log("endpoint is :",endpoint)
         window.open(endpoint, "_blank");
