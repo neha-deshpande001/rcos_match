@@ -322,7 +322,8 @@
 
     // button to open SEEK code comparison table
     function table(form) {
-        let endpoint = "/rcos_match/table/?";
+        let endpoint = "/rcos_match/table/" + {{individual_id}};
+        console.log("endpoint is :",endpoint)
         window.open(endpoint, "_blank");
     }
 
