@@ -17,7 +17,7 @@
         <h3 id="given_code">Unidentified Individual's SEEK Code:</h3>
         <br>
 
-        <table id="seekTable" style="font-family:'monospace';" border="2" class="table">
+        <table id="seekTable" style="font-family: monospace;" border="2" class="table">
             <tr>
                 <th>Individual Name</th>
                 <th>Individual ID</th>
@@ -26,6 +26,21 @@
             </tr>
 
         <script type="text/javascript">
+            function seekCodeDifferences(seekCode, matchSeekCode){
+                //displays differences in seek code as red
+                let newMatchCode = "";
+                for(let i = 0; i < seekCode.length; i++){
+                    if(seekCode[i] !== matchSeekCode[i]){
+                        newMatchCode += '<span style="color: red;">'+matchSeekCode[i]+'</span>';
+                    }
+                    else{
+                        newMatchCode += seekCode[i]; 
+                    }
+                }
+                return newMatchCode;
+            }
+
+
             document.getElementById("given_code").innerHTML = "Unidentified Individual's SEEK Code: " + "{{ given_code }}";
 
             var array = {{table_data|safe}}
@@ -34,7 +49,12 @@
                 var newRow = seekTable.insertRow(seekTable.length);
                 for(var j = 0; j < array[i].length; j++){
                     var cell = newRow.insertCell(j);
-                    cell.innerHTML = array[i][j];
+                    if(j === array[i].length-1){ // SEEK code column
+                        cell.innerHTML = seekCodeDifferences("{{ given_code }}",array[i][j]);
+                    }
+                    else{
+                        cell.innerHTML = array[i][j];
+                    }
                 }
             }
 
