@@ -1,186 +1,109 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
+from django.views import generic
 
 import json
 import numpy as np
 
-from eb_core.models import Individual_Sighting, Seek_Identity, Individual, Sighting_Photo
-from eb_core.views import individual_sighting_unidentified
-from .forms import *
+import eb_core.models
+import eb_core.views
 from .models import *
 
 
-def get_individual_seek():
-    return [
-        individual.individual_sighting_set.latest('id').seek_identity for individual in Individual.objects.all()
-        if individual.individual_sighting_set.count()
-    ]
+class Match_View(generic.UpdateView, eb_core.views.Match_View):
+    permission_required = 'eb_core.main'
+    model = eb_core.models.Individual_Sighting
+    fields = ['completed', ]
+    template_name = 'rcos_match/matching/index.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        match = context['results'].loc[self.kwargs['match_index']]
+
+        bbox_set = self.object.sighting_bounding_box_set.all()
+
+        images = [{'id': bbox.photo.image.name,
+                'url': bbox.photo.compressed_image.url,
+                'full_res': bbox.photo.image.url} for bbox in bbox_set]
+
+        boxes = {bbox.photo.image.name: [{
+            'bbox': [bbox.x, bbox.y, bbox.w, bbox.h],
+            'category_id': self.object.pk
+        }] for bbox in bbox_set}
+
+        given_code = self.object.seek_identity
+        str_given_code = str(given_code)
+
+        bbox_set = match.individual.individual_sighting_set.last().sighting_bounding_box_set.all()
+
+        matchImages = [{'id': bbox.photo.image.name,
+                'url': bbox.photo.compressed_image.url,
+                'full_res': bbox.photo.image.url} for bbox in bbox_set]
+
+        matchBoxes = {bbox.photo.image.name: [{
+            'bbox': [bbox.x, bbox.y, bbox.w, bbox.h],
+            'category_id': 1
+        }] for bbox in bbox_set}
+
+        known_thumbnails = {
+            '':
+            {i: eb_core.models.Sighting_Photo.objects.get(image=image['id']).thumbnail.url
+            for i, image in enumerate(matchImages)}
+        }
+        unknown_thumbnails = {
+            '':
+            {i: eb_core.models.Sighting_Photo.objects.get(image=image['id']).thumbnail.url
+            for i, image in enumerate(images)}
+        }
 
 
-def get_results(request, codes, given_code, seek_identities, match_index):
-    if 'binary' in request.GET and request.GET['binary'] == 'on':
-        total_match = np.all((codes == given_code) | (
-            codes == '?') | (np.array(given_code) == '?'), axis=1)
-        seek_identities = seek_identities[total_match]
-        codes = codes[total_match]
+        context |= {
+            'match': match,
+            'images': json.dumps(images),
+            'matchImages': json.dumps(matchImages),
+            'given_code': str_given_code,
+            'match_index': self.kwargs['match_index'],
+            'individual_id': match.individual.id,
+            'boxes': json.dumps(boxes),
+            'matchBoxes': json.dumps(matchBoxes),
+            'known_thumbnails': known_thumbnails,
+            'unknown_thumbnails': unknown_thumbnails,
+        }
 
-    if 'individual' in request.GET:
-        total_match = np.array([seek_identity.individual_sighting.individual is not None and
-                                seek_identity.individual_sighting.individual.pk ==
-                                int(request.GET['individual'])
-                                for seek_identity in seek_identities])
-        seek_identities = seek_identities[total_match]
-        codes = codes[total_match]
+        return context
 
-    scores = np.mean(codes == given_code, axis=1) - \
-        0.4*np.mean(codes == '?', axis=1)
+    def get_success_url(self):
+        return reverse('individual view', kwargs={'pk': self.object.individual.pk})
 
-    results = np.column_stack((scores, seek_identities))[np.argsort(-scores)]
-    results_list = list()
+    def form_valid(self, form):
+        match = super().get_context_data(self.kwargs)['results'].loc[self.kwargs['match_index']]
+        self.object.individual = match.individual
+        self.object.save()
 
-    for score, seek in results:
-        temp_dict = {'seek_code': str(seek), 'score': score}
-
-        if seek.individual_sighting.individual:
-            temp_dict['name'] = seek.individual_sighting.individual.name
-        else:
-            temp_dict['name'] = "Unknown"
-        temp_dict['id'] = seek.individual_sighting.id
-        results_list.append(temp_dict)
+        return super().form_valid(form)
 
 
-    individual_sighting_id_match = results_list[match_index]['id']
-    individual_sighting = get_object_or_404(Individual_Sighting, pk=individual_sighting_id_match)
-    individual_id_match = 0
-    if individual_sighting.individual:
-        individual_id_match = individual_sighting.individual.id
+class Table_View(eb_core.views.Match_View):
+    permission_required = 'eb_core.main'
+    model = eb_core.models.Individual_Sighting
+    template_name = 'rcos_match/table/seek_table.html'
 
-    indiv = get_object_or_404(Individual, pk=individual_id_match)
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
 
+        given_code = self.object.seek_identity
 
-    return results, results_list, indiv, individual_sighting
+        table_data = []
+        for i, row in context['results'].iterrows():
+            temp = [row.individual.name, row.individual.pk, "{0:0.4f}".format(row.seek_score), " ".join(str(row.seek_identity))]
+            table_data.append(temp)
 
+        context |= {
+            'table_data': table_data,
+            'given_code':" ".join(str(given_code))
+        }
 
-def matching(request, individual_id, match_index):
-
-    # get the unknown elephant's Individual_Sighting
-    individual_sighting_unknown = get_object_or_404(Individual_Sighting, pk=individual_id)
-
-    bbox_set = individual_sighting_unknown.sighting_bounding_box_set.all()
-
-    images = [{'id': bbox.photo.image.name,
-               'url': bbox.photo.compressed_image.url,
-               'full_res': bbox.photo.image.url} for bbox in bbox_set]
-
-    boxes = {bbox.photo.image.name: [{
-        'bbox': [bbox.x, bbox.y, bbox.w, bbox.h],
-        'category_id': 1
-    }] for bbox in bbox_set}
-
-    given_code = individual_sighting_unknown.seek_identity
-    str_given_code = str(given_code)
-
-    
-    # get Seek_Identity of existing Individuals' most recent Individual_Sighting
-    seek_identities = np.array(get_individual_seek(), dtype=object)
-    codes = np.array([np.array(code) for code in seek_identities])
-
-
-    results, results_list, indiv, individual_sighting = get_results(request, codes, given_code, seek_identities, match_index)
-    bbox_set = individual_sighting.sighting_bounding_box_set.all()
-
-    matchImages = [{'id': bbox.photo.image.name,
-               'url': bbox.photo.compressed_image.url,
-               'full_res': bbox.photo.image.url} for bbox in bbox_set]
-
-    matchBoxes = {bbox.photo.image.name: [{
-        'bbox': [bbox.x, bbox.y, bbox.w, bbox.h],
-        'category_id': 1
-    }] for bbox in bbox_set}
-
-
-    known_thumbnails = {
-        individual_sighting.group_sighting.earthranger_serial:
-        {i: Sighting_Photo.objects.get(image=image['id']).thumbnail.url
-         for i, image in enumerate(matchImages)}
-    }
-    unknown_thumbnails = {
-        individual_sighting_unknown.group_sighting.earthranger_serial:
-        {i: Sighting_Photo.objects.get(image=image['id']).thumbnail.url
-         for i, image in enumerate(images)}
-    }
-
-
-    context = {
-        'results_list': json.dumps(results_list), # to use in javascript
-        'images': json.dumps(images),
-        'matchImages': json.dumps(matchImages),
-        'given_code': str_given_code,
-        'match_index': match_index,
-        'form': Completed_Form(),
-        'individual_id': individual_id,
-        'boxes': json.dumps(boxes),
-        'matchBoxes': json.dumps(matchBoxes),
-        'known_thumbnails': known_thumbnails,
-        'unknown_thumbnails': unknown_thumbnails,
-    }
-
-    return render(request, 'rcos_match/matching/index.html', context)
-
-
-
-def matching_submit(request, individual_id, match_index):
-
-    # get the unknown elephant's Individual_Sighting
-    indiv_sight = get_object_or_404(Individual_Sighting, pk=individual_id)
-
-    given_code = indiv_sight.seek_identity
-
-    # get Seek_Identity of existing Individuals' most recent Individual_Sighting
-    seek_identities = np.array(get_individual_seek(), dtype=object)
-    codes = np.array([np.array(code) for code in seek_identities])
-
-    _, _, indiv, _ = get_results(request, codes, given_code, seek_identities, match_index)
-
-    form = Completed_Form(request.POST or None)
-
-    if request.method == 'POST':
-        if form.is_valid():
-            # completed checkbox
-            is_complete = request.POST.get('completed', False)
-            is_complete = True if is_complete == 'on' else False
-            indiv_sight.completed = is_complete
-
-        # assign the individual sighting to the individual
-        indiv_sight.individual = indiv
-        indiv_sight.save()
-        
-    return redirect(individual_sighting_unidentified)
-
-
-def table(request, individual_id):
-
-    # get the unknown elephant's Individual_Sighting
-    indiv_sight = get_object_or_404(Individual_Sighting, pk=individual_id)
-
-    given_code = indiv_sight.seek_identity
-
-    # seek_identities = get_individual_seek()
-    seek_identities = np.array(get_individual_seek(), dtype=object)
-
-    codes = np.array([np.array(code) for code in seek_identities])
-    results, _, _, _ = get_results(request, codes, given_code, seek_identities, 0)
-
-    table_data = []
-    for score, seek in results:
-        temp = [seek.individual_sighting.individual.name, seek.individual_sighting.individual.id, "{0:0.4f}".format(score), " ".join(str(seek))]
-        table_data.append(temp)
-
-    context = {
-        'table_data':table_data,
-        'given_code':" ".join(str(given_code))
-    }
-    return render(request,"rcos_match/table/seek_table.html",context)
-
+        return context

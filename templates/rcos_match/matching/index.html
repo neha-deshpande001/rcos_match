@@ -138,8 +138,8 @@
         <div class="dropdown">
             <button class="dropbtn" id="score">Score: </button>
             <div class="dropdown-content">
-                <p>CurvRank Score: N/A</p>
                 <button class="seekScoreButton" onclick="table()" id="score2">SEEK Score: </button>
+                <p id="score3">CurvRank Score: </p>
             </div>
         </div>
 
@@ -184,7 +184,7 @@
     var images_data = {{ images|safe }};
     var images_match_data = {{ matchImages|safe }};
     const given_code = "{{ given_code }}";
-    var results = {{ results_list|safe }};
+    const other_code = "{{ match.seek_identity }}";
     var boxes = {{ boxes|safe }};
     var matchBoxes = {{ matchBoxes|safe }};
 
@@ -192,24 +192,21 @@
         viewImage(currentKnownIndex, "possibleMatchImg", "currentImageProgressMatch", "match");
         viewImage(currentUnknownIndex, "unknownElephantImg", "currentImageProgressUnknown", "unidentified");
         viewElephantInfo(currentMatchIndex);
-        seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"]);
+        seekCodeDifferences(given_code, other_code);
 
-        // set functionality for confirm button
-        document.getElementById("form").action = 
-            ["/rcos_match/matching/","{{ individual_id }}", "/", "{{ match_index }}", "/submit"].join("");
     }
 
     function viewElephantInfo(matchIndex){
         //display info for elephant at matchIndex
-        var ElephantSighting = results[matchIndex];
+        // var ElephantSighting = results[matchIndex];
 
-        document.getElementById("currentMatchProgress").innerHTML = "Possible Match #" + (matchIndex + 1) + " (out of " + results.length + ")";
-        document.getElementById("name").innerHTML = "Individual Name: " + ElephantSighting["name"];
-        document.getElementById("individualSightingID").innerHTML = "Individual Sighting ID: " + ElephantSighting["id"];
+        document.getElementById("currentMatchProgress").innerHTML = "Possible Match #" + (matchIndex + 1) + " (out of " + {{ results|length }} + ")";
+        document.getElementById("name").innerHTML = "Individual Name: " + "{{ match.individual.name }}";
 
-        document.getElementById("matchSeekCode").innerHTML = ElephantSighting["seek_code"];
-        document.getElementById("score").innerHTML = "Score: " + ElephantSighting["score"].toPrecision(4);
-        document.getElementById("score2").innerHTML = "SEEK Score: " + ElephantSighting["score"].toPrecision(4);
+        document.getElementById("matchSeekCode").innerHTML = other_code;
+        document.getElementById("score").innerHTML = "Score: " + "{{ match.sum_score }}";
+        document.getElementById("score2").innerHTML = "SEEK Score: " + "{{ match.seek_score }}";
+        document.getElementById("score3").innerHTML = "CurvRank Score: " + "{{ match.curvrank_score }}";
     }
 
     function seekCodeDifferences(seekCode, matchSeekCode){
@@ -287,17 +284,17 @@
 
     // arrow button functionality
     document.getElementById("nextMatchButton").onclick = function(){
-        currentMatchIndex = (currentMatchIndex + 1) % results.length;
+        currentMatchIndex = (currentMatchIndex + 1) % {{ results|length }};
         window.location.href = '../' + (currentMatchIndex);
         viewElephantInfo(currentMatchIndex);
-        seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"]);
+        seekCodeDifferences(given_code, other_code);
     };
 
     document.getElementById("previousMatchButton").onclick = function(){
-        currentMatchIndex = (currentMatchIndex - 1 + results.length) % results.length;
+        currentMatchIndex = (currentMatchIndex - 1 + {{ results|length }}) % {{ results|length }};
         window.location.href = '../' + (currentMatchIndex);
         viewElephantInfo(currentMatchIndex);
-        seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"])
+        seekCodeDifferences(given_code, other_code)
     };
 
     document.getElementById("nextKnownImageButton").onclick = function(){
@@ -322,7 +319,7 @@
 
     // button to open SEEK code comparison table
     function table() {
-        let endpoint = "/rcos_match/table/" + {{individual_id}};
+        let endpoint = "/rcos_match/table/" + {{ object.pk }};
         console.log("endpoint is :",endpoint)
         window.open(endpoint, "_blank");
     }
@@ -333,16 +330,16 @@
     document.onkeyup = function(e) {
 
         if (e.which == 40) { //next match button (down arrow key)
-            currentMatchIndex = (currentMatchIndex + 1) % results.length;
+            currentMatchIndex = (currentMatchIndex + 1) % {{ results|length }};
             window.location.href = '../' + (currentMatchIndex);
             viewElephantInfo(currentMatchIndex);
-            seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"]);
+            seekCodeDifferences(given_code, other_code);
         }
         else if (e.which == 38) { //previous match button (up arrow key)
-            currentMatchIndex = (currentMatchIndex - 1 + results.length) % results.length;
+            currentMatchIndex = (currentMatchIndex - 1 + {{ results|length }}) % {{ results|length }};
             window.location.href = '../' + (currentMatchIndex);
             viewElephantInfo(currentMatchIndex);
-            seekCodeDifferences(given_code, results[currentMatchIndex]["seek_code"])
+            seekCodeDifferences(given_code, other_code)
         }
         else if (e.which == 39) { //next known image button (right arrow key)
             currentKnownIndex = (currentKnownIndex + 1) % images_match_data.length;
